@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: parallelthought-ai
+    env: static
+    buildCommand: npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: GEMINI_API_KEY
+        fromValue: YOUR_API_KEY_HERE # Should be set in Render dashboard
