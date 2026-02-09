@@ -1,0 +1,5 @@
+{
+  "name": "ParallelThought AI",
+  "description": "A multi-agent decision-making system that analyzes complex problems from five expert perspectives (Security, Performance, Cost, Developer, and Strategy) and synthesizes them into weighted recommendations.",
+  "requestFramePermissions": []
+}
