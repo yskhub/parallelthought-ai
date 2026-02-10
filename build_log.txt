@@ -1,0 +1,32 @@
+
+> parallelthought-ai@0.0.0 build
+> vite build
+
+[36mvite v6.4.1 [32mbuilding for production...[36m[39m
+transforming...
+Error: Cannot apply unknown utility class `backdrop-blur-md`. Are you using CSS modules or similar and missing `@reference`? https://tailwindcss.com/docs/functions-and-directives#reference-directive
+    at onInvalidCandidate (D:\parallelthought-ai\node_modules\tailwindcss\dist\lib.js:21:1314)
+    at Te (D:\parallelthought-ai\node_modules\tailwindcss\dist\lib.js:16:36652)
+    at D:\parallelthought-ai\node_modules\tailwindcss\dist\lib.js:21:355
+    at Rr (D:\parallelthought-ai\node_modules\tailwindcss\dist\lib.js:3:1718)
+    at _ (D:\parallelthought-ai\node_modules\tailwindcss\dist\lib.js:3:1377)
+    at $e (D:\parallelthought-ai\node_modules\tailwindcss\dist\lib.js:21:172)
+    at un (D:\parallelthought-ai\node_modules\tailwindcss\dist\lib.js:38:294)
+    at async cn (D:\parallelthought-ai\node_modules\tailwindcss\dist\lib.js:38:631)
+    at async Xr (D:\parallelthought-ai\node_modules\@tailwindcss\node\dist\index.js:10:3417)
+    at async I (D:\parallelthought-ai\node_modules\@tailwindcss\postcss\dist\index.js:10:3977)
+[32mΓ£ô[39m 3 modules transformed.
+Γ£ù Build failed in 335ms
+error during build:
+[vite:css] [postcss] tailwindcss: D:/parallelthought-ai/index.css:1:1: Cannot apply unknown utility class `backdrop-blur-md`. Are you using CSS modules or similar and missing `@reference`? https://tailwindcss.com/docs/functions-and-directives#reference-directive
+file: D:/parallelthought-ai/index.css:1:0
+    at Input.error (D:\parallelthought-ai\node_modules\postcss\lib\input.js:135:16)
+    at Root.error (D:\parallelthought-ai\node_modules\postcss\lib\node.js:146:32)
+    at Object.Once (D:\parallelthought-ai\node_modules\@tailwindcss\postcss\dist\index.js:10:6911)
+    at async LazyResult.runAsync (D:\parallelthought-ai\node_modules\postcss\lib\lazy-result.js:293:11)
+    at async runPostCSS (file:///D:/parallelthought-ai/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:43853:21)
+    at async compilePostCSS (file:///D:/parallelthought-ai/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:43823:18)
+    at async compileCSS (file:///D:/parallelthought-ai/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:43678:27)
+    at async Object.handler (file:///D:/parallelthought-ai/node_modules/vite/dist/node/chunks/dep-D4NMHUTW.js:42994:11)
+    at async transform (file:///D:/parallelthought-ai/node_modules/rollup/dist/es/shared/node-entry.js:21246:16)
+    at async ModuleLoader.addModuleSource (file:///D:/parallelthought-ai/node_modules/rollup/dist/es/shared/node-entry.js:21474:36)
