@@ -26,7 +26,7 @@ const App: React.FC = () => {
     developer: 40,
     business: 70
   });
-  
+
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<AnalysisStep>('IDLE');
@@ -78,7 +78,7 @@ const App: React.FC = () => {
     params.set('p', problem);
     params.set('c', context);
     params.set('w', JSON.stringify(weights));
-    
+
     const fullUrl = `${baseUrl}?${params.toString()}`;
     navigator.clipboard.writeText(fullUrl).then(() => {
       setCopySuccess(true);
@@ -127,7 +127,7 @@ const App: React.FC = () => {
       setStep('COMPLETING');
       const newResult = { problem, context, perspectives, synthesis, weights };
       setResult(newResult);
-      
+
       const newScenario: SavedScenario = {
         id: crypto.randomUUID(),
         timestamp: Date.now(),
@@ -164,156 +164,202 @@ const App: React.FC = () => {
   const perspectiveKeys = ['security', 'performance', 'cost', 'developer', 'business'] as const;
 
   return (
-    <div className={`min-h-screen flex flex-col transition-colors duration-500 relative ${theme === 'dark' ? 'bg-[#030712] text-[#f9fafb]' : 'bg-[#f8fafc] text-[#0f172a]'}`}>
-      {/* Background Layer */}
-      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        <Spotlight 
-          className="-top-40 left-0 md:left-60 md:-top-20" 
-          fill={theme === 'dark' ? "rgba(99, 102, 241, 0.1)" : "rgba(0,0,0,0.05)"} 
+    <div className={`min-h-screen flex flex-col transition-colors duration-700 relative selection:bg-indigo-500/30 font-sans ${theme === 'dark' ? 'bg-[#030712] text-[#f9fafb]' : 'bg-[#f8fafc] text-[#0f172a]'}`}>
+
+      {/* 3D Visual Layer - Decoupled from scroll flow */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none">
+        <Spotlight
+          className="-top-40 left-0 md:left-60 md:-top-20"
+          fill={theme === 'dark' ? "rgba(99, 102, 241, 0.15)" : "rgba(0,0,0,0.05)"}
         />
-        <div className={`absolute inset-0 z-0 transition-opacity duration-1000 ${theme === 'dark' ? 'opacity-20' : 'opacity-10'}`}>
-           <SplineScene scene={sceneUrl} />
+        <div className={`absolute inset-0 z-0 transition-opacity duration-[2000ms] ease-in-out ${theme === 'dark' ? 'opacity-30' : 'opacity-15'}`}>
+          <SplineScene scene={sceneUrl} className="w-full h-full" />
         </div>
+        <div className="absolute inset-x-0 bottom-0 h-96 bg-gradient-to-t from-[#030712] to-transparent theme-dark:block hidden" />
       </div>
 
       <div className="relative z-10 flex flex-col min-h-screen">
-        <header className={`p-6 flex justify-between items-center backdrop-blur-md border-b sticky top-0 z-50 transition-all ${theme === 'dark' ? 'border-white/5 bg-black/10' : 'border-slate-200 bg-white/40'}`}>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center font-black text-white shadow-xl">PT</div>
-            <div>
-              <h1 className="text-sm font-black tracking-tighter uppercase">Parallel Thought</h1>
-              <p className="text-[8px] mono text-gray-500 uppercase tracking-widest">Decision Synthesis Engine</p>
+        <header className={`p-4 md:p-6 flex justify-between items-center backdrop-blur-2xl border-b sticky top-0 z-50 transition-all duration-500 ${theme === 'dark' ? 'border-white/5 bg-black/40' : 'border-slate-200 bg-white/60'}`}>
+          <div className="flex items-center gap-4">
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl blur opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative w-10 h-10 bg-black rounded-xl flex items-center justify-center font-black text-white shadow-2xl border border-white/10">PT</div>
+            </div>
+            <div className="hidden sm:block">
+              <h1 className="text-sm font-black tracking-tighter uppercase bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Parallel Thought</h1>
+              <p className="text-[7px] font-mono text-gray-400 uppercase tracking-[0.4em]">Decision Synthesis Engine</p>
             </div>
           </div>
-          <div className="flex gap-4 items-center">
-            <button 
+
+          <div className="flex gap-3 items-center">
+            <button
               onClick={generateShareLink}
-              className={`px-4 py-2 text-[10px] mono font-black rounded-full border transition-all flex items-center gap-2 ${copySuccess ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' : theme === 'dark' ? 'bg-white/5 border-white/5 text-gray-400 hover:text-white' : 'bg-slate-200/50 border-slate-300 text-slate-600 hover:text-slate-900'}`}
+              className={`px-4 py-2 text-[9px] font-mono font-bold rounded-full border transition-all duration-300 flex items-center gap-2 ${copySuccess ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400 shadow-lg shadow-emerald-500/10' : theme === 'dark' ? 'bg-white/5 border-white/10 text-gray-400 hover:text-white hover:bg-white/10' : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-indigo-600 shadow-sm'}`}
             >
               {copySuccess ? 'PROTOCOL_LINK_COPIED' : 'SHARE_SCENARIO'}
-              {!copySuccess && <span className="text-xs">🔗</span>}
+              {!copySuccess && <span className="text-[10px] opacity-60">🔗</span>}
             </button>
-            <div className="w-px h-6 bg-white/10 hidden md:block" />
-            <button 
+            <div className={`w-px h-6 hidden md:block ${theme === 'dark' ? 'bg-white/10' : 'bg-slate-200'}`} />
+            <button
               onClick={toggleTheme}
-              className={`w-10 h-10 flex items-center justify-center rounded-full border transition-all ${theme === 'dark' ? 'bg-white/5 border-white/5 text-gray-400 hover:text-white' : 'bg-slate-200/50 border-slate-300 text-slate-600 hover:text-slate-900'}`}
-              title="Toggle theme"
+              className={`w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-300 ${theme === 'dark' ? 'bg-white/5 border-white/10 text-gray-400 hover:text-white hover:bg-white/10' : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-indigo-600 shadow-sm'}`}
             >
               {theme === 'dark' ? '☀️' : '🌙'}
             </button>
-            <button 
+            <button
               onClick={() => setShowHistory(!showHistory)}
-              className={`px-4 py-2 text-[10px] mono font-bold rounded-full border transition-all ${theme === 'dark' ? 'bg-white/5 border-white/5 text-gray-400 hover:text-white' : 'bg-slate-200/50 border-slate-300 text-slate-600 hover:text-slate-900'}`}
+              className={`px-4 py-2 text-[9px] font-mono font-black rounded-full border transition-all duration-300 ${theme === 'dark' ? 'bg-white/5 border-white/10 text-gray-400 hover:text-white hover:bg-white/10' : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-indigo-600 shadow-sm'}`}
             >
               HISTORY[{history.length}]
             </button>
           </div>
         </header>
 
-        <main className="flex-1 max-w-7xl mx-auto w-full p-6 md:p-12 space-y-12">
-          {!result || loading ? (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="grid grid-cols-1 lg:grid-cols-3 gap-8"
-            >
-              <div className="lg:col-span-2 space-y-8">
-                <div className={`p-8 rounded-[2.5rem] border shadow-2xl backdrop-blur-xl transition-all ${theme === 'dark' ? 'bg-white/[0.02] border-white/10' : 'bg-white border-slate-200'}`}>
-                  <RichTextEditor 
-                    label="Analysis Target" 
-                    value={problem} 
-                    onChange={setProblem} 
-                    minHeight="120px"
-                  />
-                  <div className="mt-8">
-                    <RichTextEditor 
-                      label="Environment & Context" 
-                      value={context} 
-                      onChange={setContext} 
-                      minHeight="200px"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-8">
-                <div className={`p-8 rounded-[2.5rem] border shadow-2xl backdrop-blur-xl transition-all ${theme === 'dark' ? 'bg-white/[0.02] border-white/10' : 'bg-white border-slate-200'}`}>
-                  <h3 className="text-[10px] mono font-black text-indigo-400 uppercase tracking-[0.3em] mb-8">Priority_Calibration</h3>
-                  <div className="space-y-6">
-                    {Object.entries(weights).map(([key, value]) => (
-                      <div key={key} className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <label className="text-[9px] mono font-bold uppercase text-gray-500">{key}</label>
-                          <span className={`text-[9px] mono font-black ${theme === 'dark' ? 'text-gray-300' : 'text-slate-900'}`}>{value}%</span>
-                        </div>
-                        <input 
-                          type="range" 
-                          min="0" 
-                          max="100" 
-                          value={value} 
-                          onChange={(e) => handleWeightChange(key as keyof Weights, parseInt(e.target.value))}
-                          className="w-full h-1 bg-indigo-500/20 rounded-full appearance-none cursor-pointer accent-indigo-500"
+        <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-8 lg:p-12 space-y-12 mb-20">
+          <AnimatePresence mode="wait">
+            {!result || loading ? (
+              <motion.div
+                key="input-form"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.02, filter: 'blur(20px)' }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
+              >
+                <div className="lg:col-span-8 space-y-8 h-full">
+                  <div className={`p-6 md:p-10 rounded-[2.5rem] border shadow-2xl backdrop-blur-2xl transition-all duration-500 h-full flex flex-col ${theme === 'dark' ? 'bg-white/[0.02] border-white/10 shadow-indigo-500/5' : 'bg-white border-slate-200 shadow-slate-200/50'}`}>
+                    <div className="flex-1">
+                      <RichTextEditor
+                        label="Analysis Target"
+                        value={problem}
+                        onChange={setProblem}
+                        minHeight="140px"
+                      />
+                      <div className="mt-10">
+                        <RichTextEditor
+                          label="Environment & Context"
+                          value={context}
+                          onChange={setContext}
+                          minHeight="240px"
                         />
                       </div>
-                    ))}
-                  </div>
-
-                  {/* Motif Selector */}
-                  <div className="mt-12 pt-8 border-t border-indigo-500/10">
-                    <h3 className="text-[10px] mono font-black text-indigo-400 uppercase tracking-[0.3em] mb-6">Visual_Interface_Motif</h3>
-                    <div className="grid grid-cols-3 gap-2">
-                      {(Object.keys(VISUAL_MOTIFS) as Array<MotifKey>).map((motif) => (
-                        <button
-                          key={motif}
-                          onClick={() => selectMotif(motif)}
-                          className={`py-3 rounded-xl border text-[9px] mono font-black transition-all ${selectedMotif === motif 
-                            ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg' 
-                            : theme === 'dark' ? 'bg-white/5 border-white/5 text-gray-500 hover:text-white' : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-900'}`}
-                        >
-                          {motif}
-                        </button>
-                      ))}
                     </div>
                   </div>
-                  
-                  <button 
-                    onClick={runAnalysis}
-                    disabled={loading}
-                    className="w-full mt-10 py-5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-gray-800 text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl flex items-center justify-center gap-3 group"
-                  >
-                    {loading ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                        <span>EXECUTING_{step}</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>RUN_ANALYSIS_PROTOCOL</span>
-                        <span className="group-hover:translate-x-1 transition-transform">→</span>
-                      </>
-                    )}
-                  </button>
                 </div>
-              </div>
-            </motion.div>
-          ) : (
-            <div className="space-y-16">
-              <button 
-                onClick={() => setResult(null)}
-                className="group flex items-center gap-2 text-[10px] mono font-black text-gray-500 hover:text-indigo-500 transition-colors"
+
+                <div className="lg:col-span-4 space-y-8">
+                  <div className={`p-6 md:p-10 rounded-[2.5rem] border shadow-2xl backdrop-blur-2xl transition-all duration-500 ${theme === 'dark' ? 'bg-white/[0.02] border-white/10 shadow-indigo-500/5' : 'bg-white border-slate-200 shadow-slate-200/50'}`}>
+                    <h3 className="text-[10px] font-mono font-black text-indigo-400 uppercase tracking-[0.3em] mb-8 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                      Priority_Calibration
+                    </h3>
+                    <div className="space-y-6">
+                      {Object.entries(weights).map(([key, value]) => (
+                        <div key={key} className="space-y-2 group">
+                          <div className="flex justify-between items-center">
+                            <label className="text-[9px] font-mono font-bold uppercase text-gray-500 group-hover:text-indigo-400 transition-colors">{key}</label>
+                            <span className={`text-[9px] font-mono font-black ${theme === 'dark' ? 'text-gray-300' : 'text-slate-900'}`}>{value}%</span>
+                          </div>
+                          <div className="relative h-6 flex items-center">
+                            <input
+                              type="range"
+                              min="0"
+                              max="100"
+                              value={value}
+                              onChange={(e) => handleWeightChange(key as keyof Weights, parseInt(e.target.value))}
+                              className="w-full h-1 bg-indigo-500/10 rounded-full appearance-none cursor-pointer accent-indigo-500"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-12 pt-8 border-t border-indigo-500/10">
+                      <h3 className="text-[10px] font-mono font-black text-indigo-400 uppercase tracking-[0.3em] mb-6">Visual_Motif</h3>
+                      <div className="grid grid-cols-3 gap-2">
+                        {(Object.keys(VISUAL_MOTIFS) as Array<MotifKey>).map((motif) => (
+                          <button
+                            key={motif}
+                            onClick={() => selectMotif(motif)}
+                            className={`py-3 rounded-xl border text-[9px] font-mono font-black transition-all duration-300 ${selectedMotif === motif
+                              ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/20'
+                              : theme === 'dark' ? 'bg-white/5 border-white/5 text-gray-500 hover:text-gray-300 hover:bg-white/10' : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50'}`}
+                          >
+                            {motif}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={runAnalysis}
+                      disabled={loading}
+                      className="w-full mt-10 py-5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 disabled:bg-gray-800 disabled:opacity-50 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all duration-300 shadow-xl shadow-indigo-900/20 flex items-center justify-center gap-3 group relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                      {loading ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                          <span className="animate-pulse">EXECUTING_{step}</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>RUN_ANALYSIS_PROTOCOL</span>
+                          <span className="group-hover:translate-x-1 transition-transform">→</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="results-view"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="space-y-12"
               >
-                <span>←</span> INITIALIZE_NEW_PROMPT
-              </button>
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4 border-b border-indigo-500/10">
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => setResult(null)}
+                      className="group flex items-center gap-2 text-[10px] font-mono font-black text-gray-500 hover:text-indigo-500 transition-colors mb-4"
+                    >
+                      <span className="text-sm">←</span> INITIALIZE_NEW_PROMPT
+                    </button>
+                    <h2 className="text-2xl md:text-3xl font-black tracking-tight leading-none" dangerouslySetInnerHTML={{ __html: result.problem }}></h2>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-indigo-500/80 font-black">Synthesis_Output_Report</p>
+                  </div>
+                  <div className={`px-5 py-3 rounded-2xl border backdrop-blur-xl flex flex-col items-center min-w-[120px] ${theme === 'dark' ? 'bg-indigo-500/10 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'}`}>
+                    <span className="text-[9px] font-mono text-indigo-400 uppercase font-black mb-1">Confidence</span>
+                    <span className="text-2xl font-black text-indigo-500">{result.synthesis.confidence}<span className="text-xs">/10</span></span>
+                  </div>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {perspectiveKeys.map((type) => (
-                  <PerspectiveCard key={type} type={type} data={result.perspectives[type]} />
-                ))}
-              </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                  {perspectiveKeys.map((type, idx) => (
+                    <motion.div
+                      key={type}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                    >
+                      <PerspectiveCard type={type} data={result.perspectives[type]} />
+                    </motion.div>
+                  ))}
+                </div>
 
-              <SynthesisSection synthesis={result.synthesis} />
-            </div>
-          )}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  <SynthesisSection synthesis={result.synthesis} />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </main>
       </div>
 
@@ -321,38 +367,41 @@ const App: React.FC = () => {
         {/* Error Modal */}
         {error && (
           <>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setError(null)}
-              className="fixed inset-0 bg-black/80 backdrop-blur-md z-[200]"
+              className="fixed inset-0 bg-black/80 backdrop-blur-2xl z-[200]"
             />
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className={`fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg z-[201] p-1 shadow-2xl overflow-hidden rounded-[2rem] ${theme === 'dark' ? 'bg-red-900/10' : 'bg-red-500/5'}`}
+              className={`fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg z-[201] p-1 shadow-2xl overflow-hidden rounded-[3rem] ${theme === 'dark' ? 'bg-red-500/10 shadow-red-900/20' : 'bg-red-500/5 shadow-red-500/10'}`}
             >
-              <div className={`glass p-8 rounded-[2rem] border-red-500/20 border flex flex-col items-center text-center ${theme === 'dark' ? 'bg-[#030712]' : 'bg-white'}`}>
-                <div className="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center text-3xl mb-6 animate-pulse border border-red-500/20">
-                  ⚠️
+              <div className={`p-10 rounded-[2.9rem] border-red-500/20 border flex flex-col items-center text-center backdrop-blur-3xl ${theme === 'dark' ? 'bg-[#030712]/90' : 'bg-white/95'}`}>
+                <div className="w-20 h-20 rounded-3xl bg-red-500/10 flex items-center justify-center text-4xl mb-8 border border-red-500/20 shadow-inner">
+                  <span className="animate-bounce">⚠️</span>
                 </div>
-                <h2 className="text-xl font-black text-red-500 uppercase tracking-[0.2em] mb-4">Protocol_Interrupt</h2>
-                <div className={`w-full p-5 rounded-2xl mb-8 mono text-[11px] leading-relaxed text-left border ${theme === 'dark' ? 'bg-black/60 border-red-500/10 text-red-400' : 'bg-red-50 border-red-200 text-red-600'}`}>
-                  <div className="text-[9px] text-red-500/50 mb-2 font-black uppercase tracking-widest">[CRITICAL_LOG_ENTRY]</div>
+                <h2 className="text-xl font-black text-red-500 uppercase tracking-[0.3em] mb-4">Protocol_Interrupt</h2>
+                <div className={`w-full p-6 rounded-[1.5rem] mb-10 font-mono text-[11px] leading-relaxed text-left border ${theme === 'dark' ? 'bg-black/80 border-red-500/10 text-red-400' : 'bg-red-50 border-red-200 text-red-600'}`}>
+                  <div className="text-[9px] text-red-500/50 mb-3 font-black uppercase tracking-widest flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                    LOG: CRITICAL_EXCEPTION_REPORT
+                  </div>
                   {error}
                 </div>
                 <div className="flex gap-4 w-full">
-                  <button 
+                  <button
                     onClick={() => setError(null)}
-                    className="flex-1 py-4 px-6 text-[10px] mono font-black uppercase tracking-widest border border-white/10 hover:bg-white/5 rounded-2xl transition-all"
+                    className="flex-1 py-4 px-6 text-[10px] font-mono font-black uppercase tracking-widest border border-white/5 hover:bg-white/5 rounded-2xl transition-all"
                   >
                     Dismiss
                   </button>
-                  <button 
+                  <button
                     onClick={() => { setError(null); runAnalysis(); }}
-                    className="flex-1 py-4 px-6 text-[10px] mono font-black uppercase tracking-widest bg-red-600 hover:bg-red-500 text-white rounded-2xl transition-all shadow-xl shadow-red-900/20"
+                    className="flex-1 py-4 px-6 text-[10px] font-mono font-black uppercase tracking-widest bg-red-600 hover:bg-red-500 text-white rounded-2xl transition-all shadow-xl shadow-red-900/30 active:scale-95"
                   >
                     Retry_Link
                   </button>
@@ -365,41 +414,45 @@ const App: React.FC = () => {
         {/* History Panel */}
         {showHistory && (
           <>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowHistory(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+              className="fixed inset-0 bg-black/70 backdrop-blur-md z-[100]"
             />
-            <motion.div 
+            <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className={`fixed right-0 top-0 h-full w-full max-w-md border-l z-[101] p-8 shadow-2xl transition-colors ${theme === 'dark' ? 'bg-[#030712] border-white/5' : 'bg-white border-slate-200'}`}
+              className={`fixed right-0 top-0 h-full w-full max-w-md border-l z-[101] p-10 shadow-3xl transition-colors backdrop-blur-3xl ${theme === 'dark' ? 'bg-[#030712]/95 border-white/5' : 'bg-white/95 border-slate-200'}`}
             >
-              <div className="flex justify-between items-center mb-10">
-                <h2 className="text-sm font-black uppercase tracking-widest">Protocol_Logs</h2>
-                <button onClick={() => setShowHistory(false)} className="text-gray-500 hover:text-indigo-500 text-xl">✕</button>
+              <div className="flex justify-between items-center mb-12">
+                <div>
+                  <h2 className="text-sm font-black uppercase tracking-[0.3em] mb-1">Protocol_Logs</h2>
+                  <p className="text-[9px] font-mono text-gray-500 uppercase">Cached thought manifestations</p>
+                </div>
+                <button onClick={() => setShowHistory(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-gray-500 hover:text-indigo-500 transition-colors">✕</button>
               </div>
-              <div className="space-y-4 overflow-y-auto max-h-[calc(100vh-150px)] pr-2 custom-scrollbar no-scrollbar">
+              <div className="space-y-4 overflow-y-auto max-h-[calc(100vh-200px)] pr-4 custom-scrollbar">
                 {history.map((item) => (
-                  <div 
+                  <div
                     key={item.id}
                     onClick={() => loadFromHistory(item)}
-                    className={`p-5 rounded-2xl border cursor-pointer transition-all group ${theme === 'dark' ? 'bg-white/[0.03] border-white/5 hover:bg-white/[0.06] hover:border-indigo-500/50' : 'bg-slate-50 border-slate-200 hover:bg-slate-100 hover:border-indigo-500/50'}`}
+                    className={`p-6 rounded-2xl border cursor-pointer transition-all group relative overflow-hidden ${theme === 'dark' ? 'bg-white/[0.03] border-white/5 hover:bg-white/[0.06] hover:border-indigo-500/40' : 'bg-slate-50 border-slate-200 hover:bg-white hover:shadow-xl hover:border-indigo-300'}`}
                   >
-                    <div className="flex justify-between text-[8px] mono text-gray-500 mb-2">
+                    <div className="flex justify-between text-[8px] font-mono text-gray-500 mb-2 relative z-10">
                       <span>{new Date(item.timestamp).toLocaleString()}</span>
-                      <span>HASH: {item.id.slice(0, 8)}</span>
+                      <span>HASH_{item.id.slice(0, 8)}</span>
                     </div>
-                    <h4 className={`text-xs font-bold line-clamp-2 transition-colors ${theme === 'dark' ? 'text-gray-300 group-hover:text-white' : 'text-slate-700 group-hover:text-indigo-600'}`} dangerouslySetInnerHTML={{ __html: item.problem }}></h4>
+                    <h4 className={`text-xs font-bold line-clamp-2 transition-colors relative z-10 ${theme === 'dark' ? 'text-gray-300 group-hover:text-white' : 'text-slate-700 group-hover:text-indigo-600'}`} dangerouslySetInnerHTML={{ __html: item.problem }}></h4>
+                    <div className="absolute right-0 top-0 w-24 h-full bg-gradient-to-l from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </div>
                 ))}
                 {history.length === 0 && (
-                  <div className="text-center py-20 opacity-20">
-                    <p className="text-[10px] mono uppercase tracking-widest">No cached thoughts</p>
+                  <div className="text-center py-24 opacity-20 bg-white/5 rounded-3xl border border-dashed border-white/10">
+                    <p className="text-[10px] font-mono uppercase tracking-widest px-10">No cached nodes found in localized memory bank</p>
                   </div>
                 )}
               </div>
